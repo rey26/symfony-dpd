@@ -12,16 +12,32 @@ class MainController extends AbstractController{
      */
     public function index()
     {
-        $number = random_int(0, 100);
-        return $this->render('home/main.html.twig', 
-        ['number' => $number]);
+        return $this->render('home/main.html.twig');
     }
 
     /**
-     * @Route("/api/all-branches")
+     * @Route("/api/branches/all")
      */
 
-    public function getAllBranches()
+    public function getAllBranchesJSON()
+    {
+        return new JsonResponse($this->getAllBranches());
+    }
+
+    /**
+     * @Route("/api/branches/detail/{id}")
+     */
+    public function getBranchDetail($id)
+    {
+        $branches = $this->getAllBranches();
+        foreach($branches as $key => $branch){
+            if($branch['internalId'] != $id)
+                unset($branches[$key]);
+        }
+        return new JsonResponse($branches);
+    }
+
+    private function getAllBranches()
     {
         $client = HttpClient::create();
         $response = $client->request('GET', 'http://www.dpdparcelshop.cz/api/get-all');
@@ -37,8 +53,7 @@ class MainController extends AbstractController{
             $branch = new BranchModel($item);
             array_push($branches, $branch->getBranchData());
         }
-
-        return new JsonResponse($branches);
+        return $branches;
     }
 }
 ?>
