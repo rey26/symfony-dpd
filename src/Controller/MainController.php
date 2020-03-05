@@ -1,8 +1,9 @@
 <?php
 namespace App\Controller;
+use App\Entity\BranchModel;
 use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class MainController extends AbstractController{
@@ -29,8 +30,15 @@ class MainController extends AbstractController{
         }
         
         $content = $response->getContent();
+        $content = json_decode($content);
 
-        return new Response($content);
+        $branches = array();
+        foreach($content->data->items as $item){
+            $branch = new BranchModel($item);
+            array_push($branches, $branch->getBranchData());
+        }
+
+        return new JsonResponse($branches);
     }
 }
 ?>
