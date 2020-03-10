@@ -1,7 +1,6 @@
 <?php
 namespace App\Controller;
 use App\Entity\BranchModel;
-use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,7 +20,7 @@ class MainController extends AbstractController{
 
     public function getAllBranchesJSON()
     {
-        return new JsonResponse($this->getAllBranches());
+        return new JsonResponse(BranchModel::getAllBranches());
     }
 
     /**
@@ -29,31 +28,8 @@ class MainController extends AbstractController{
      */
     public function getBranchDetail($id)
     {
-        $branches = $this->getAllBranches();
-        foreach($branches as $key => $branch){
-            if($branch['internalId'] == $id)
-                return new JsonResponse($branches[$key]);
-        }
-        // return new JsonResponse($branches);
+        return new JsonResponse(BranchModel::getBranchDetail($id));
     }
 
-    private function getAllBranches()
-    {
-        $client = HttpClient::create();
-        $response = $client->request('GET', 'http://www.dpdparcelshop.cz/api/get-all');
-        if($response->getStatusCode() != 200){
-            return 'External service error';
-        }
-        
-        $content = $response->getContent();
-        $content = json_decode($content);
-
-        $branches = array();
-        foreach($content->data->items as $item){
-            $branch = new BranchModel($item);
-            array_push($branches, $branch->getBranchData());
-        }
-        return $branches;
-    }
 }
 ?>
