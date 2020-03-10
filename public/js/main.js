@@ -43,7 +43,6 @@ function getBranchDetail(id){
 }
 
 function viewBranchDetail(branch){
-    var branch = branch[Object.keys(branch)[0]];
     var html = '<h4>' + branch.internalName + '</h4>';
     html += branch.internalId.length > 0 ? '<p>Interné ID: ' + branch.internalId + '</p>' : '';
     html += (branch.location.length > 0) ? '<p>Súradnice: ' + branch.location + '</p>' : '';

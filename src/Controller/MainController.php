@@ -31,10 +31,10 @@ class MainController extends AbstractController{
     {
         $branches = $this->getAllBranches();
         foreach($branches as $key => $branch){
-            if($branch['internalId'] != $id)
-                unset($branches[$key]);
+            if($branch['internalId'] == $id)
+                return new JsonResponse($branches[$key]);
         }
-        return new JsonResponse($branches);
+        // return new JsonResponse($branches);
     }
 
     private function getAllBranches()
